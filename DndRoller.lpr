@@ -3,11 +3,13 @@ program DndRoller;
 {$mode objfpc}{$H+}
 
 uses
-  {$IFDEF UNIX}
+ {$IFDEF UNIX}
   cthreads,
-  {$ENDIF}
-  Classes, SysUtils, CustApp
-  { you can add units after this };
+   {$ENDIF}
+  Classes,
+  SysUtils,
+  CustApp,
+  Roller { you can add units after this };
 
 type
 
@@ -22,56 +24,65 @@ type
     procedure WriteHelp; virtual;
   end;
 
-{ TDndRoller }
+  { TDndRoller }
 
-procedure TDndRoller.DoRun;
-var
-  ErrorMsg: String;
-begin
-  // quick check parameters
-  ErrorMsg:=CheckOptions('h', 'help');
-  if ErrorMsg<>'' then begin
-    ShowException(Exception.Create(ErrorMsg));
+  procedure TDndRoller.DoRun;
+  var
+    ErrorMsg, Input: string;
+    Roller: TRoller;
+  begin
+    // quick check parameters
+    ErrorMsg := CheckOptions('h', 'help');
+    if ErrorMsg <> '' then
+    begin
+      ShowException(Exception.Create(ErrorMsg));
+      Terminate;
+      Exit;
+    end;
+
+    // parse parameters
+    if HasOption('h', 'help') then
+    begin
+      WriteHelp;
+      Terminate;
+      Exit;
+    end;
+
+    { add your program here }
+    Randomize;
+    ReadLn(Input);
+    while Input <> 'q' do
+    begin
+      Roller := TRoller.Create(1, 20, 0);
+      WriteLn(Roller.Roll);
+      ReadLn(Input);
+    end;
+    // stop program loop
     Terminate;
-    Exit;
   end;
 
-  // parse parameters
-  if HasOption('h', 'help') then begin
-    WriteHelp;
-    Terminate;
-    Exit;
+  constructor TDndRoller.Create(TheOwner: TComponent);
+  begin
+    inherited Create(TheOwner);
+    StopOnException := True;
   end;
 
-  { add your program here }
+  destructor TDndRoller.Destroy;
+  begin
+    inherited Destroy;
+  end;
 
-  // stop program loop
-  Terminate;
-end;
-
-constructor TDndRoller.Create(TheOwner: TComponent);
-begin
-  inherited Create(TheOwner);
-  StopOnException:=True;
-end;
-
-destructor TDndRoller.Destroy;
-begin
-  inherited Destroy;
-end;
-
-procedure TDndRoller.WriteHelp;
-begin
-  { add your help code here }
-  writeln('Usage: ', ExeName, ' -h');
-end;
+  procedure TDndRoller.WriteHelp;
+  begin
+    { add your help code here }
+    writeln('Usage: ', ExeName, ' -h');
+  end;
 
 var
   Application: TDndRoller;
 begin
-  Application:=TDndRoller.Create(nil);
-  Application.Title:='DnD Roller';
+  Application := TDndRoller.Create(nil);
+  Application.Title := 'DnD Roller';
   Application.Run;
   Application.Free;
 end.
-
