@@ -9,7 +9,7 @@ uses
   Classes,
   SysUtils,
   CustApp,
-  Roller { you can add units after this };
+  Roller;
 
 type
 
@@ -30,7 +30,10 @@ type
   var
     ErrorMsg, Input: string;
     Roller: TRoller;
+    i: integer;
   begin
+    Randomize;
+
     // quick check parameters
     ErrorMsg := CheckOptions('h', 'help');
     if ErrorMsg <> '' then
@@ -48,14 +51,21 @@ type
       Exit;
     end;
 
-    { add your program here }
-    Randomize;
-    ReadLn(Input);
-    while Input <> 'q' do
+    if paramCount = 0 then
     begin
-      Roller := TRoller.Create(1, 20, 0);
-      WriteLn(Roller.Roll);
-      ReadLn(Input);
+      ShowException(Exception.Create('No specified input.'));
+      Terminate;
+      Exit;
+    end;
+
+    // parse required params
+    for i:=1 to paramCount do
+    begin
+      if (paramStr(i).Length > 0) then
+      begin
+        Roller:=TRoller.Create(paramStr(i));
+        WriteLn(Roller.Roll);
+      end;
     end;
     // stop program loop
     Terminate;
