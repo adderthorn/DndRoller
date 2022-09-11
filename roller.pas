@@ -11,6 +11,7 @@ type
   TRoller = class
   private
     FNumRolls, FDieSides, FAdditive: integer;
+    FRegExParsed: boolean;
     procedure SetNumRolls(NumRolls: integer);
     procedure SetDieSides(DieSides: integer);
     procedure SetAdditive(Additive: integer);
@@ -24,6 +25,7 @@ type
     property NumRolls: integer read FNumRolls write SetNumRolls;
     property DieSides: integer read FDieSides write SetDieSides;
     property Additive: integer read FAdditive write SetAdditive;
+    property IsRegExParsed: boolean read FRegExParsed;
   end;
 
 const
@@ -37,6 +39,7 @@ begin
   FNumRolls := 0;
   FDieSides := 0;
   FAdditive := 0;
+  FRegExParsed := false;
 end;
 
 constructor TRoller.Create(NumRoles, DieSides, Additive: integer);
@@ -44,6 +47,7 @@ begin
   FNumRolls := NumRoles;
   FDieSides := DieSides;
   FAdditive := Additive;
+  FRegExParsed := false;
 end;
 
 constructor TRoller.Create(DnDRoll: string);
@@ -57,7 +61,8 @@ begin
   NumRollsFlag:=0;
   DieSidesFlag:=0;
   InvertAdditive:=false;
-  if Reg.Exec(DnDRoll) then
+  FRegExParsed:=Reg.Exec(DnDRoll);
+  if FRegExParsed then
   begin
     for i:=1 to Length(DnDRoll) do
     begin
@@ -116,16 +121,19 @@ end;
 procedure TRoller.SetNumRolls(NumRolls: integer);
 begin
   FNumRolls := NumRolls;
+  FRegExParsed := false;
 end;
 
 procedure TRoller.SetDieSides(DieSides: integer);
 begin
   FDieSides := DieSides;
+  FRegExParsed := false;
 end;
 
 procedure TRoller.SetAdditive(Additive: integer);
 begin
   FAdditive := Additive;
+  FRegExParsed := false;
 end;
 
 end.
