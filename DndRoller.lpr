@@ -83,6 +83,9 @@ type
     for i := 1 to c do
       WriteLn(Roller.Roll);
 
+    // free objects
+    FreeAndNil(Roller);
+
     // stop program loop
     Terminate;
   end;

@@ -19,7 +19,6 @@ type
     constructor Create; overload;
     constructor Create(NumRoles, DieSides, Additive: integer); overload;
     constructor Create(DnDRoll: string); overload;
-    destructor Destroy; override;
     function Roll: integer;
   published
     property NumRolls: integer read FNumRolls write SetNumRolls;
@@ -97,13 +96,6 @@ begin
     end;
   end;
   FreeAndNil(Reg);
-end;
-
-destructor TRoller.Destroy;
-begin
-  FreeAndNil(FNumRolls);
-  FreeAndNil(FDieSides);
-  FreeAndNil(FAdditive);
 end;
 
 function TRoller.Roll: integer;
